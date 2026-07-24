@@ -1,0 +1,560 @@
+.container {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.headerRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 32px;
+}
+
+.headerLeft {
+  display: flex;
+  flex-direction: column;
+}
+
+.syncButton {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.syncButton:hover {
+  background: var(--color-bg-subtle);
+  border-color: var(--color-primary);
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.subtitle {
+  color: var(--color-text-secondary);
+  font-size: 14px;
+}
+
+/* Metrics Grid */
+.metricsGrid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.metricCard {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-sm);
+}
+
+.metricHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.metricTitle {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+.metricValue {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.metricChange {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.metricChange.positive {
+  color: var(--color-success);
+}
+
+.metricChange.negative {
+  color: var(--color-danger);
+}
+
+.metricChangeSub {
+  color: var(--color-text-muted);
+  font-weight: 400;
+}
+
+.metricSubtext {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  margin-top: 4px;
+}
+
+/* Section Headings */
+.sectionHeading {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+/* Quick Actions */
+.quickActionsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+@media (max-width: 1024px) {
+  .quickActionsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .quickActionsGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.actionCard {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  text-align: left;
+}
+
+.actionCard:hover {
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-md);
+}
+
+.actionIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  background: #F4F6F8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+.actionText {
+  display: flex;
+  flex-direction: column;
+}
+
+.actionTitle {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.actionDesc {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+
+/* Currently Processing */
+.processingCard {
+  background: #F9FAFB;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  margin-bottom: 32px;
+}
+
+.processingHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.processingTitle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 600;
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--color-border);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.processingMeta {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.eta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.etaLabel {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+
+.etaValue {
+  font-size: 14px;
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.viewQueueBtn {
+  background: transparent;
+  border: 1px solid var(--color-primary);
+  color: var(--color-primary);
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  font-weight: 500;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.viewQueueBtn:hover {
+  background: rgba(53, 97, 255, 0.05);
+}
+
+.progressBarContainer {
+  width: 100%;
+  height: 6px;
+  background: var(--color-border);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.progressBarFill {
+  height: 100%;
+  background: var(--color-primary);
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.processingFile {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+
+/* Bottom Grid */
+.bottomGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+@media (max-width: 900px) {
+  .bottomGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.cardTitle {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.cardAction {
+  font-size: 14px;
+  color: var(--color-primary);
+  font-weight: 500;
+}
+
+/* Activity List */
+.activityList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.activityItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.activityIcon {
+  flex-shrink: 0;
+}
+
+.activityInfo {
+  flex-grow: 1;
+}
+
+.activityName {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+
+.activityStatus {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+
+.activityMeta {
+  text-align: right;
+}
+
+.activitySavings {
+  font-size: 12px;
+  color: var(--color-text-main);
+  margin-bottom: 2px;
+}
+
+.activityTime {
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+/* Chart Placeholder */
+.chartContainer {
+  width: 100%;
+  height: 200px;
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+}
+
+.chartYAxis {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  font-size: 11px;
+  color: var(--color-text-muted);
+  padding-right: 12px;
+}
+
+.chartLines {
+  flex-grow: 1;
+  height: 100%;
+  position: relative;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.chartGridLine {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  border-top: 1px dashed var(--color-border);
+}
+
+.chartXAxis {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  font-size: 11px;
+  color: var(--color-text-muted);
+  padding-left: 36px;
+}
+
+.chartHeaderRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.chartTitleWrapper {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.datePickerContainer {
+  position: relative;
+}
+
+.datePickerBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  color: var(--color-text-main);
+  cursor: pointer;
+}
+
+.datePickerBtn:hover {
+  background: var(--color-bg-subtle);
+}
+
+.datePickerPopover {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  display: flex;
+  z-index: 100;
+  min-width: 600px;
+}
+
+.datePickerSidebar {
+  width: 160px;
+  border-right: 1px solid var(--color-border);
+  padding: 12px 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.datePickerOption {
+  padding: 8px 16px;
+  font-size: 13px;
+  color: var(--color-text-main);
+  cursor: pointer;
+  text-align: left;
+  background: transparent;
+  border: none;
+  width: 100%;
+}
+
+.datePickerOption:hover {
+  background: var(--color-bg-subtle);
+}
+
+.datePickerOption.active {
+  background: #F1F2F4;
+  font-weight: 500;
+}
+
+.datePickerContent {
+  padding: 16px;
+  flex-grow: 1;
+}
+
+.datePickerInputs {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.dateInput {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+}
+
+.datePickerFooter {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--color-border);
+}
+
+.btnCancel {
+  padding: 6px 12px;
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.btnApply {
+  padding: 6px 12px;
+  background: var(--color-primary);
+  color: #fff;
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.chartLegend {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  font-size: 11px;
+  color: var(--color-text-secondary);
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legendColor {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.legendOriginal { background: #D1D5DB; }
+.legendCurrent { background: var(--color-primary); }
+
+.chartSvg {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}

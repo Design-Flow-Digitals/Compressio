@@ -9,8 +9,9 @@ generator client {
 // enough when changing adapters.
 // See https://www.prisma.io/docs/orm/reference/prisma-schema-reference#string for more information
 datasource db {
-  provider = "sqlite"
-  url      = "file:dev.sqlite"
+  provider  = "postgresql"
+  url       = env("SEESION_POOLER_URL")
+  directUrl = env("SEESION_POOLER_URL")
 }
 
 model Session {
@@ -31,4 +32,45 @@ model Session {
   emailVerified Boolean?  @default(false)
   refreshToken        String?
   refreshTokenExpires DateTime?
+}
+
+model Shop {
+  id                String   @id // The shopify shop domain
+  domain            String   @unique
+  plan              String   @default("Free")
+  compressions_used Int      @default(0)
+  installed_at      DateTime @default(now())
+  settings_json     String   @default("{}")
+  images            Image[]
+  jobs              Job[]
+}
+
+model Image {
+  id                 String   @id @default(uuid())
+  shop_id            String
+  shop               Shop     @relation(fields: [shop_id], references: [id], onDelete: Cascade)
+  shopify_file_id    String
+  backup_file_id     String?
+  status             String   @default("pending") // pending, optimized, excluded
+  original_size_kb   Int?
+  compressed_size_kb Int?
+  format             String?
+  product_id         String?
+  is_shared          Boolean  @default(false)
+  created_at         DateTime @default(now())
+  updated_at         DateTime @updatedAt
+  jobs               Job[]
+}
+
+model Job {
+  id          String    @id @default(uuid())
+  shop_id     String
+  shop        Shop      @relation(fields: [shop_id], references: [id], onDelete: Cascade)
+  image_id    String?
+  image       Image?    @relation(fields: [image_id], references: [id], onDelete: SetNull)
+  status      String    @default("queued") // queued, processing, completed, failed
+  error       String?
+  queued_at   DateTime  @default(now())
+  started_at  DateTime?
+  finished_at DateTime?
 }

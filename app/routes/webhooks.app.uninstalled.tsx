@@ -13,5 +13,11 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     await db.session.deleteMany({ where: { shop } });
   }
 
+  // Cancel any pending/processing jobs for this shop
+  await db.job.updateMany({
+    where: { shop_id: shop, status: { in: ["queued", "processing"] } },
+    data: { status: "failed", error: "App uninstalled" },
+  });
+
   return new Response();
 };
