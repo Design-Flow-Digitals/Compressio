@@ -7,6 +7,7 @@ import polarisTranslations from "@shopify/polaris/locales/en.json";
 
 import { authenticate } from "../shopify.server";
 import { Footer } from "../components/Footer";
+import { PageLoader } from "../components/PageLoader";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   await authenticate.admin(request);
@@ -28,6 +29,7 @@ export default function App() {
           <s-link href="/app/pricing">Pricing</s-link>
           <s-link href="/app/support">Support & FAQ</s-link>
         </s-app-nav>
+        <PageLoader />
         <Outlet />
         <Footer />
       </AppBridgeProvider>

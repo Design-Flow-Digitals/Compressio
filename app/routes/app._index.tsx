@@ -6,19 +6,19 @@ import { boundary } from "@shopify/shopify-app-react-router/server";
 import prisma from "../db.server";
 import { enqueueJob } from "../services/queue.server";
 import styles from "../styles/dashboard.module.css";
-import { 
-  ImageIcon, CheckIcon, ClockIcon, StackIcon, PieChartIcon, 
-  LightningIcon, HourglassIcon, RefreshIcon, GearIcon, XIcon 
+import {
+  ImageIcon, CheckIcon, ClockIcon, StackIcon, PieChartIcon,
+  LightningIcon, HourglassIcon, RefreshIcon, GearIcon, XIcon
 } from "../components/Icons";
 import { DateRangePicker } from "../components/DateRangePicker";
 import { Button } from "@shopify/polaris";
-import { RefreshIcon as RefreshPolarisIcon } from "@shopify/polaris-icons";
+import { RefreshIcon as RefreshPolarisIcon, StarIcon } from "@shopify/polaris-icons";
 
 import { fetchLiveShopifyImages, upsertImageState } from "../services/product-sync.server";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { session, admin } = await authenticate.admin(request);
-  
+
   let shop = await prisma.shop.findUnique({ where: { id: session.shop } });
   if (!shop) {
     shop = await prisma.shop.create({
@@ -26,9 +26,35 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     });
   }
 
+  let isPro = false;
+  try {
+    const response = await admin.graphql(
+      `#graphql
+      query GetActiveSubscriptions {
+        currentAppInstallation {
+          activeSubscriptions {
+            id
+            name
+            status
+          }
+        }
+      }`
+    );
+    const json = await response.json();
+    const subscriptions = json.data?.currentAppInstallation?.activeSubscriptions || [];
+    if (subscriptions.some((sub: any) => sub.status === "ACTIVE")) {
+      isPro = true;
+    }
+  } catch (err) {
+    console.error("Error checking active subscriptions:", err);
+  }
+
   const images = await fetchLiveShopifyImages(admin.graphql, session.shop);
 
-  return { shop, images };
+  const totalCompressed = shop?.compressions_used || 0;
+  const freeQuotaRemaining = Math.max(0, 100 - totalCompressed);
+
+  return { shop, images, isPro, freeQuotaRemaining };
 };
 
 export const action = async ({ request }: ActionFunctionArgs) => {
@@ -60,7 +86,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     }
     return { success: true, count: pendingImages.length };
   }
-  
+
   if (actionType === "compress_single") {
     const imageId = formData.get("imageId") as string;
     const images = await fetchLiveShopifyImages(admin.graphql, session.shop);
@@ -95,7 +121,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 };
 
 export default function Index() {
-  const { shop, images } = useLoaderData<typeof loader>();
+  const { shop, images, isPro, freeQuotaRemaining } = useLoaderData<typeof loader>();
   const fetcher = useFetcher<typeof action>();
   const navigate = useNavigate();
 
@@ -122,25 +148,30 @@ export default function Index() {
     return `${Math.floor(hours / 24)} days ago`;
   };
 
-  // Map real images to activity
-  const recentActivity = images.slice(0, 5).map((img: any) => {
-    let type = "pending";
-    let statusText = "Pending";
+  // Map real images to activity (only show ones that have been processed)
+  const activeImages = images.filter((img: any) => img.status !== "pending");
+
+  const recentActivity = activeImages.slice(0, 5).map((img: any) => {
+    let type = "success";
+    let statusText = "Optimized";
     let savings = "—";
-    
+
     if (img.status === "optimized") {
       type = "success";
       statusText = "Optimized";
-      const savedKb = img.original_size_kb - img.compressed_size_kb;
-      savings = savedKb > 1024 ? `Saved ${(savedKb/1024).toFixed(1)} MB` : `Saved ${savedKb} KB`;
+      const savedKb = (img.original_size_kb || 0) - (img.compressed_size_kb || 0);
+      savings = savedKb > 1024 ? `Saved ${(savedKb / 1024).toFixed(1)} MB` : `Saved ${savedKb} KB`;
     } else if (img.status === "excluded") {
       type = "skipped";
       statusText = "Skipped";
     }
 
+    // Extract filename from URL (e.g. from https://cdn.shopify.com/.../image.jpg?v=123 -> image.jpg)
+    const fileName = img.url ? img.url.split('/').pop()?.split('?')[0] : `image_${img.id}`;
+
     return {
       id: img.id,
-      name: img.shopify_file_id.split('/').pop() || `image_${img.id}`,
+      name: fileName || `image_${img.id}`,
       status: statusText,
       savings,
       time: timeAgo(img.updated_at || img.created_at || new Date().toISOString()),
@@ -151,7 +182,7 @@ export default function Index() {
   // Dynamic Chart Mock based on filter
   const chartData = useMemo(() => {
     // Just mock some dynamic shift when the filter changes
-    const offset = dateRange.length; 
+    const offset = dateRange.length;
     return {
       originalPath: `M0 80 Q 20 ${70 + offset}, 40 ${60 + offset} T 80 ${40 - offset} T 100 ${30 - offset}`,
       currentPath: `M0 90 L 20 ${80 + offset} L 40 ${75 + offset} L 60 ${70 - offset} L 80 ${60 - offset} L 100 ${55 - offset}`
@@ -166,13 +197,16 @@ export default function Index() {
           <h1 className={styles.title}>Welcome back, {storeName} 👋</h1>
           <p className={styles.subtitle}>Here's what's happening with your images today.</p>
         </div>
-        <Button 
-          onClick={() => fetcher.submit({ actionType: "sync_images" }, { method: "POST" })}
-          disabled={isSubmitting}
-          icon={RefreshPolarisIcon}
-        >
-          {isSubmitting ? "Syncing Images..." : "Sync Store Images"}
-        </Button>
+        {(!isPro || freeQuotaRemaining <= 0) && (
+          <Button
+            variant="primary"
+            tone="success"
+            onClick={() => navigate("/app/pricing")}
+            icon={StarIcon}
+          >
+            Upgrade to Pro
+          </Button>
+        )}
       </div>
 
       {/* Metrics Grid (5 cards) */}
@@ -222,7 +256,7 @@ export default function Index() {
 
       <h2 className={styles.sectionHeading}>Quick Actions</h2>
       <div className={styles.quickActionsGrid}>
-        <div className={styles.actionCard} onClick={() => navigate('/app/library')}>
+        <div className={styles.actionCard} onClick={() => navigate('/app/images')}>
           <div className={styles.actionIcon}>
             <LightningIcon />
           </div>
@@ -231,8 +265,8 @@ export default function Index() {
             <span className={styles.actionDesc}>Optimize all images in your store</span>
           </div>
         </div>
-        
-        <div className={styles.actionCard} onClick={() => alert("Coming soon")}>
+
+        <div className={styles.actionCard} onClick={() => navigate('/app/images')}>
           <div className={styles.actionIcon}>
             <HourglassIcon />
           </div>
@@ -242,23 +276,23 @@ export default function Index() {
           </div>
         </div>
 
-        <div className={styles.actionCard} onClick={() => alert("Coming soon")}>
+        <div className={styles.actionCard} onClick={() => navigate('/app/images')}>
           <div className={styles.actionIcon}>
-            <RefreshIcon />
+            <XIcon />
           </div>
           <div className={styles.actionText}>
-            <span className={styles.actionTitle}>Restore Originals</span>
-            <span className={styles.actionDesc}>Restore images to original</span>
+            <span className={styles.actionTitle}>Exclude Images</span>
+            <span className={styles.actionDesc}>Select images to skip</span>
           </div>
         </div>
 
-        <div className={styles.actionCard} onClick={() => alert("Coming soon")}>
+        <div className={styles.actionCard} onClick={() => navigate('/app/settings')}>
           <div className={styles.actionIcon}>
             <GearIcon />
           </div>
           <div className={styles.actionText}>
-            <span className={styles.actionTitle}>Automation Settings</span>
-            <span className={styles.actionDesc}>Configure auto optimization</span>
+            <span className={styles.actionTitle}>Adjust Settings</span>
+            <span className={styles.actionDesc}>Configure compressions</span>
           </div>
         </div>
       </div>
@@ -309,7 +343,7 @@ export default function Index() {
               </div>
             </div>
           </div>
-          
+
           <div className={styles.chartContainer}>
             <div className={styles.chartYAxis}>
               <span>150 MB</span>
@@ -321,7 +355,7 @@ export default function Index() {
               <div className={styles.chartGridLine} style={{ bottom: '33.33%' }}></div>
               <div className={styles.chartGridLine} style={{ bottom: '66.66%' }}></div>
               <div className={styles.chartGridLine} style={{ top: 0 }}></div>
-              
+
               <svg className={styles.chartSvg} preserveAspectRatio="none" viewBox="0 0 100 100">
                 <path d={chartData.originalPath} fill="none" stroke="#D1D5DB" strokeWidth="2" strokeDasharray="4 4" />
                 <path d={chartData.currentPath} fill="none" stroke="var(--color-primary)" strokeWidth="2" />
