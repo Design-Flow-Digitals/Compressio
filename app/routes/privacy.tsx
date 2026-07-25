@@ -14,7 +14,7 @@ export default function PrivacyPolicy() {
       <section style={{ marginBottom: "24px" }}>
         <h2 style={{ fontSize: "20px", fontWeight: "600", marginBottom: "12px" }}>1. Introduction</h2>
         <p>
-          Compressio ("we", "our", or "us") provides image optimization services to online merchants. 
+          Compressio ("we", "our", or "us") provides image optimization services to online merchants.
           This Privacy Policy describes how personal and store data is collected, used, and shared when you install or use the Compressio application.
         </p>
       </section>
@@ -45,7 +45,7 @@ export default function PrivacyPolicy() {
       <section style={{ marginBottom: "24px" }}>
         <h2 style={{ fontSize: "20px", fontWeight: "600", marginBottom: "12px" }}>4. Data Retention & Deletion</h2>
         <p>
-          We retain your store settings and image compression metadata only for as long as necessary to fulfill the service. 
+          We retain your store settings and image compression metadata only for as long as necessary to fulfill the service.
           If you uninstall Compressio, all associated store data is automatically deleted from our servers within 48 hours in compliance with GDPR data erasure requirements.
         </p>
       </section>
@@ -60,8 +60,8 @@ export default function PrivacyPolicy() {
       <section style={{ marginBottom: "24px" }}>
         <h2 style={{ fontSize: "20px", fontWeight: "600", marginBottom: "12px" }}>6. Contact Us</h2>
         <p>
-          If you have any questions or concerns about this Privacy Policy or our data practices, please contact us at 
-          {" "}<a href="mailto:support@compressio.app" style={{ color: "#005bd3" }}>support@compressio.app</a>.
+          If you have any questions or concerns about this Privacy Policy or our data practices, please contact us at
+          {" "}<a href="mailto:support@designflowdigitals.com" style={{ color: "#005bd3" }}>support@designflowdigitals.com</a>.
         </p>
       </section>
 
