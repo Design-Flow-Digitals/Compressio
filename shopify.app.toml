@@ -2,7 +2,7 @@
 
 client_id = "c096a55ea93ab53cd48a50437ee07b48"
 name = "Compressio"
-application_url = "https://example.com"
+application_url = "https://compressio-nu.vercel.app"
 embedded = true
 
 [build]
