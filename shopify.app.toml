@@ -2,7 +2,7 @@
 
 client_id = "c096a55ea93ab53cd48a50437ee07b48"
 name = "Compressio"
-application_url = "https://compressio-nu.vercel.app"
+application_url = "https://compressio-production-ccc7c2ff.up.railway.app"
 embedded = true
 
 [build]
@@ -46,7 +46,7 @@ optional_scopes = [ ]
 use_legacy_install_flow = false
 
 [auth]
-redirect_urls = [ "https://compressio-nu.vercel.app/api/auth" ]
+redirect_urls = [ "https://compressio-production-ccc7c2ff.up.railway.app/api/auth" ]
 
 [product.metafields.app.demo_info]
 type = "single_line_text_field"
